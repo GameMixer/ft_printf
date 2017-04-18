@@ -1,39 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/04/06 12:39:17 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/04/17 18:10:09 by gderenzi         ###   ########.fr       */
+/*   Created: 2017/04/17 18:00:39 by gderenzi          #+#    #+#             */
+/*   Updated: 2017/04/17 18:10:03 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int		ft_printf(const char *format, ...)
+void	pf_init_specs(t_spec *specs)
 {
-	va_list	args;
-	t_flag	f;
-	int		i;
+	specs[0].c = 's';
+	specs[0].ptr = &pf_handler_s;
+	specs[1].c = 'S';
+	specs[1].ptr = &pf_handler_ws;
+	specs[2].c = 'c';
+	specs[2].ptr = &pf_handler_c;
+	specs[3].c = 'C';
+	specs[3].ptr = &pf_handler_wc;
+	specs[4].c = 'd';
+	specs[4].ptr = &pf_handler_d;
+}
 
-	if (!format)
-	{
-		ft_putstr("ft_printf: format string must be valid\n");
-		exit(1);
-	}
-	va_start(args, format);
+void	pf_initialize(t_flags *f)
+{
+	int	i;
+
 	i = 0;
-	f.ret = 0;
-	while (format[i] != '\0')
+	while (i < 14)
 	{
-		if (format[i] == '%')
-		{
-			
-		}
-		i += f.index;
+		f->type[i] = 0;
+		i++;
 	}
-	va_end(args);
-	return (f.ret);
+	f->index = 0;
 }
