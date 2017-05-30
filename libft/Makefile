@@ -6,7 +6,7 @@
 #    By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/02/28 19:09:15 by gderenzi          #+#    #+#              #
-#    Updated: 2017/04/06 14:58:40 by gderenzi         ###   ########.fr        #
+#    Updated: 2017/05/18 18:56:11 by gderenzi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,12 +33,16 @@ SRC			= ft_memset.c \
 				ft_strcmp.c \
 				ft_strncmp.c \
 				ft_atoi.c \
+				ft_isupper.c \
+				ft_islower.c \
 				ft_isalpha.c \
 				ft_isdigit.c \
 				ft_isalnum.c \
 				ft_isprint.c \
 				ft_toupper.c \
 				ft_tolower.c \
+				ft_strtoupper.c \
+				ft_strtolower.c \
 				ft_strncpy.c \
 				ft_isascii.c \
 				ft_memalloc.c \

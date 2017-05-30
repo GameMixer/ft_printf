@@ -6,7 +6,7 @@
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/17 17:46:20 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/04/18 13:48:48 by gderenzi         ###   ########.fr       */
+/*   Updated: 2017/05/25 19:46:43 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int		pf_check(t_flag *f)
 		pf_check_precision(f);
 		pf_check_modifier(f);
 	}
-	if (f->index == ft_strlen(f->frmt))
+	if (f->index == (int)ft_strlen(f->frmt))
 		return (-1);
 	return (0);
 }
@@ -58,7 +58,7 @@ void	pf_check_width(t_flag *f)
 	char	*str;
 
 	i = f->index;
-	if (ft_isdigit(f->frmt[f->index]) && f->frmt[index] != '0')
+	if (ft_isdigit(f->frmt[f->index]) && f->frmt[f->index] != '0')
 	{
 		while (ft_isdigit(f->frmt[f->index]))
 			f->index++;

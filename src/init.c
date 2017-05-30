@@ -6,7 +6,7 @@
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/17 18:00:39 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/04/18 14:08:44 by gderenzi         ###   ########.fr       */
+/*   Updated: 2017/05/25 19:45:17 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	pf_init_specs(t_spec *specs)
 	pf_init_specs_p2(specs);
 }
 
-void	pf_initialize(t_flags *f)
+void	pf_initialize(t_flag *f)
 {
 	int	i;
 
@@ -71,7 +71,9 @@ int		pf_init_validate(t_flag *f, va_list *args)
 
 	if (pf_check(f) == -1)
 		return (-1);
-	pf_initialize_specs(specs);
+	pf_init_specs(specs);
+	f->arg = NULL;
+	f->warg = NULL;
 	j = 0;
 	f->spec = f->frmt[f->index];
 	while (specs[j].c != f->spec && specs[j].c != 0)

@@ -6,7 +6,7 @@
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/27 18:29:19 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/03/21 15:01:46 by gderenzi         ###   ########.fr       */
+/*   Updated: 2017/05/18 19:03:12 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,5 +111,9 @@ void				ft_putnbr_base_fd(int n, int base, int fd);
 t_list				*ft_lstsort(t_list *lst, int (*cmp)(void *, void *));
 char				*ft_strjoin_char(char const *s1, char c);
 size_t				ft_strpos(char *src, char c);
+int					ft_isupper(int c);
+int					ft_islower(int c);
+char				*ft_strtoupper(char *s);
+char				*ft_strtolower(char *s);
 
 #endif
