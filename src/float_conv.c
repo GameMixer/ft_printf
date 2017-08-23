@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strndup.c                                       :+:      :+:    :+:   */
+/*   float_conv.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/07 15:51:33 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/08/08 19:57:50 by gderenzi         ###   ########.fr       */
+/*   Created: 2017/08/02 15:26:40 by gderenzi          #+#    #+#             */
+/*   Updated: 2017/08/02 16:52:51 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_printf.h"
 
-char	*ft_strndup(const char *src, size_t n)
+void	pf_conv_float(t_vector *vector, t_info *pfinfo, va_list arg)
 {
-	char	*dst;
-	char	*cdst;
-
-	if (!(dst = ft_strnew(n + 1)))
-		return (0);
-	cdst = dst;
-	n++;
-	while (--n > 0)
-		*dst++ = *src++;
-	*dst = '\0';
-	return (cdst);
+	(void)vector;
+	(void)pfinfo;
+	(void)arg;
 }

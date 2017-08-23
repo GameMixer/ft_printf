@@ -6,7 +6,7 @@
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/06 12:43:30 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/05/30 13:08:08 by gderenzi         ###   ########.fr       */
+/*   Updated: 2017/08/08 20:07:54 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,175 +19,178 @@
 # include <wchar.h>
 # include <limits.h>
 
-# define PRINTF_BUFF 32
+# define SPECS 18
+# define IS_X(x) (x == 'X' || x == 'x')
+# define IS_O(o) (o == 'O' || o == 'o')
+# define IS_D(d) (d == 'D' || d == 'd')
+# define IS_U(u) (u == 'U' || u == 'u')
+# define ISXO(x) ((IS_X(x)) || (IS_O(x)))
+# define ISLENMOD(m) (m == 'h' || m == 'l' || m == 'j' || m == 'z')
 
-char			g_buff[PRINTF_BUFF];
-int				g_i;
-
-/*
-**		| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
-**		|pre|wid| # | 0 | - | + |   | hh| h | ll|  l |  j |  z |
-*/
-
-typedef struct	s_flag
+typedef enum	e_lenmod
 {
-	int			ret;
-	char		*frmt;
-	int			index;
-	char		spec;
-	char		*arg;
-	wchar_t		*warg;
-	char		sign;
-	va_list		vlst;
-	int			type[13];
+	hh,
+	h,
+	l,
+	ll,
+	j,
+	z
+}				t_lenmod;
+
+typedef enum	e_flag
+{
+	LFT = 1 << 0,
+	POS = 1 << 1,
+	INV = 1 << 2,
+	ZER = 1 << 3,
+	HTG = 1 << 4
 }				t_flag;
 
-typedef struct	s_spec
+typedef struct	s_vector
 {
-	char		c;
-	int			(*ptr)();
-}				t_spec;
+	size_t		len;
+	size_t		cap;
+	char		*data;
+}				t_vector;
+
+typedef struct	s_info
+{
+	char		flags;
+	char		length;
+	char		spec;
+	int			width;
+	int			prec;
+	int			pset;
+}				t_info;
+
+typedef struct	s_convspec
+{
+	char		spec;
+	void		(*ptr)(t_vector *, t_info *, va_list);
+}				t_cspec;
 
 /*
-**	Main part of the program. The whole reason Im doing this shit...
+**	Where the main function is of this whole project
 **		ft_printf.c
 */
 int				ft_printf(const char *format, ...);
-void			pf_end(t_flag *f);
+int				pf_vasprintf(char **ret, const char *format, va_list arg);
+int				ft_sprintf(char *str, const char *format, ...);
+int				ft_snprintf(char *str, size_t size, const char *format, ...);
+int				ft_dprintf(int fd, const char *format, ...);
 
 /*
-**	Stores output into a buffer
-**		buff.c
+**	Handles the specifiers
+**		spec_handle.c
 */
-void			pf_buff_set(void);
-void			pf_buff_display(t_flag *f);
-void			pf_buff_null(t_flag *f);
-void			pf_buff(char c, t_flag *f);
+int				pf_strprintf(char **ret, const char *format, va_list arg);
+void			pf_info_init(t_info *pfinfo);
+void			pf_get_conv(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_conv_percent(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_handle_spec(t_vector *vector, const char **format,
+					t_info *pfinfo, va_list arg);
 
 /*
-**	Check the flags, see if they are valid
+**	Check the format, see if it's valid
 **		check.c
 */
-int				pf_check(t_flag *f);
-void			pf_check_flag(t_flag *f);
-void			pf_check_width(t_flag *f);
-void			pf_check_precision(t_flag *f);
-void			pf_check_modifier(t_flag *f);
+int				pf_check_flags(const char **format, t_info *pfinfo);
+int				pf_check_width(const char **format,
+					t_info *pfinfo, va_list arg);
+int				pf_check_prec(const char **format, t_info *pfinfo, va_list arg);
+int				pf_check_len(const char **format, t_info *pfinfo);
 
 /*
-**	Sets up the spec values and everything needed to output the data
-**		init.c
+**	Handles the precision
+**		prec_handle.c
 */
-int				pf_init_validate(t_flag *f, va_list *args);
-void			pf_initialize(t_flag *f);
-void			pf_init_specs(t_spec *specs);
-void			pf_init_specs_p2(t_spec *specs);
+void			pf_prec_nums(t_info *pfinfo, char **str);
+void			pf_prec_handle(t_info *pfinfo, char **str);
+void			pf_pad_handle(t_info *pfinfo, char **str);
+void			pf_prec_right(t_info *pfinfo, char **str, char *newstr);
 
 /*
-**	Handles c flags
-**		c_flag.c
+**	Handles the conversion into int/hex/octal
+**		num_conv.c
 */
-int				pf_modifier_c(t_flag *f, va_list *arg);
-int				pf_handler_c(t_flag *f, va_list *arg);
-int				pf_handler_wc(t_flag *f, va_list *arg);
+void			pf_conv_num(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_conv_octal(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_conv_hex(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_conv_uns(t_vector *vector, t_info *pfinfo, va_list arg);
+intmax_t		pf_int_len(char length, va_list arg);
 
 /*
-**	Handles d flags
-**		d_flag.c
+**	Handles the conversion of strings
+**		str_conv.c
 */
-char			*pf_modifier_d(t_flag *f, va_list *arg);
-int				pf_handler_d(t_flag *f, va_list *arg);
-int				pf_handler_wd(t_flag *f, va_list *arg);
+void			pf_conv_str(t_vector *vector, t_info *pfinfo, va_list arg);
+char			*pf_null_str(t_info *pfinfo);
 
 /*
-**	Handles p flag and undefined
-**		p_flag_undefined.c
+**	Handles the conversions of wstrings, or wchar arrays.
+**		wstr_conv.c
 */
-int				pf_handler_p(t_flag *f, va_list *arg);
-int				pf_handler_undefined(t_flag *f);
+void			pf_conv_wstr(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_prec_wstr(t_info *pfinfo, wchar_t *str);
+char			*pf_wstr_to_str(wchar_t *wstr);
+wchar_t			*pf_wstrdup(wchar_t *str);
+size_t			pf_wstrlen(wchar_t *str);
 
 /*
-**	Handles s flags
-**		s_flag.c
+**	Handles the conversions of chars
+**		char_conv.c
 */
-int				pf_handler_s(t_flag *f, va_list *arg);
-int				pf_handler_ws(t_flag *f, va_list *arg);
+void			pf_conv_char(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_null_char(t_vector *vector, char *str);
+void			pf_conv_unicode(wchar_t wc, char *str);
+int				pf_handle_wchar(char **str, va_list arg);
+int				pf_unicode(wchar_t wc);
 
 /*
-**	Handles u flag and o flag
-**		u_o_flag.c
+**	Handles altering the conversions based on extra rules
+**		xou_conv.c
 */
-char			*pf_modifier_u_o(t_flag *f, va_list *arg);
-int				pf_handler_u(t_flag *f, va_list *arg);
-int				pf_handler_o(t_flag *f, va_list *arg);
+void			pf_xou_handle(char **str, t_info *pfinfo);
+void			pf_alt_handle(t_info *pfinfo, char **str);
+void			pf_x_toupper(char *str, char spec);
+uintmax_t		pf_xou_len(char length, va_list arg);
 
 /*
-**	Handles U flag and O flag
-**		wu_wo_flag.c
+**	Handles various different conversions for extra credit
+**	...honestly though the main thing I wanted was color...
+**		bonus.c
 */
-char			*pf_modifier_wu_wo(t_flag *f, va_list *arg);
-int				pf_handler_wu(t_flag *f, va_list *arg);
-int				pf_handler_wo(t_flag *f, va_list *arg);
+int				pf_colors(t_vector *vector, const char **format);
+void			pf_conv_binary(t_vector *vector, t_info *pfinfo, va_list arg);
+void			pf_conv_none(t_vector *vector, t_info *pfinfo, va_list arg);
+intmax_t		*pf_none_len(t_info *pfinfo, va_list arg);
 
 /*
-**	Handles x flags
-**		x_flags.c
+**	Was going to handle floats, but not feeling like doing it.
+**	So its just sitting here doing nothing.
+**		float_conv.c
 */
-char			*pf_modifier_x(t_flag *f, va_list *arg);
-int				pf_handler_x(t_flag *f, va_list *arg);
-int				pf_handler_wx(t_flag *f, va_list *arg);
+void			pf_conv_float(t_vector *vector, t_info *pfinfo, va_list arg);
 
 /*
-**	Handles what to do with which type of value
-**		handle_format.c
+**	Handles vectors...that's basically it...don't know what more you want
+**		vector.c
 */
-void			pf_apply_mask(t_flag *f, int *mask);
-int				pf_handler_char(t_flag *f);
-int				pf_handler_num(t_flag *f);
-
-/*
-**	Manages string values
-**		display_char.c
-*/
-void			pf_display_arg(t_flag *f);
-void			pf_zero_char(t_flag *f);
-void			pf_minus_char(t_flag *f);
-void			pf_width_char(t_flag *f);
-
-/*
-**	Manages numeric values
-**		display_num.c
-*/
-void			pf_precision_without_width(t_flag *f);
-void			pf_precision_num(t_flag *f, int len_zero);
-void			pf_zero_num(t_flag *f);
-void			pf_minus_num(t_flag *f);
-void			pf_width_num(t_flag *f);
-
-/*
-**	Turns wchar array into a char array, which we can all understand...maybe
-**		wchar_to_char.c
-*/
-char			*pf_wchar_to_char(wchar_t *ws);
-int				pf_putwchar_in_char(wchar_t wchar, char *str, int i);
-
-/*
-**	Applys the flags to the argument
-**		apply_flags.c
-*/
-void			pf_precision_string(t_flag *f);
-void			pf_sharp(t_flag *f);
-void			pf_space_plus_sharp(t_flag *f);
+int				pf_vector_init(t_vector *vector, size_t cap);
+void			pf_vector_clear(t_vector *vector);
+void			pf_vector_push(t_vector *vector, char *data);
+void			pf_vector_npush(t_vector *vector, char *data, size_t n);
+void			pf_vector_resize(t_vector *vector, size_t min);
 
 /*
 **	Tools used that libft wouldnt be able to take care of in this case
+**	Or maybe they would, and I'm just too lazy to put them into libft
 **		util.c
 */
-uintmax_t		pf_sign(t_flag *f, intmax_t nbr);
-char			*pf_itoa_base(uintmax_t nbr, int base);
-size_t			pf_wstrlen(wchar_t *ws);
-int				pf_wcharlen(wchar_t wchar);
-size_t			pf_wbytelen(wchar_t *ws);
-char			*pf_wstrsub(wchar_t *ws, unsigned int start, size_t len);
+size_t			pf_findchar(const char *s, int c);
+void			*pf_realloc(void *ptr, size_t src_size, size_t new_size);
+void			pf_insert_to_str(char **s1, char *s2);
+char			*pf_imaxtoa(intmax_t value);
+char			*pf_uimaxtoa_base(uintmax_t value, int base, const char *str);
 
 #endif

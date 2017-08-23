@@ -6,7 +6,7 @@
 #    By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/02/28 19:09:15 by gderenzi          #+#    #+#              #
-#    Updated: 2017/05/18 18:56:11 by gderenzi         ###   ########.fr        #
+#    Updated: 2017/07/06 15:29:28 by gderenzi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,16 +33,12 @@ SRC			= ft_memset.c \
 				ft_strcmp.c \
 				ft_strncmp.c \
 				ft_atoi.c \
-				ft_isupper.c \
-				ft_islower.c \
 				ft_isalpha.c \
 				ft_isdigit.c \
 				ft_isalnum.c \
 				ft_isprint.c \
 				ft_toupper.c \
 				ft_tolower.c \
-				ft_strtoupper.c \
-				ft_strtolower.c \
 				ft_strncpy.c \
 				ft_isascii.c \
 				ft_memalloc.c \
@@ -99,6 +95,8 @@ SRC			= ft_memset.c \
 				ft_lstsort.c \
 				ft_strjoin_char.c \
 				ft_strpos.c \
+				ft_lstlen.c \
+				ft_lstpushback.c \
 				get_next_line.c
 OBJ			= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
@@ -110,7 +108,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@ar rc $(NAME) $(OBJ)
-	ranlib $(NAME)
+	@ranlib $(NAME)
 
 $(addprefix $(OBJDIR), %.o): $(addprefix $(SRCDIR), %.c)
 	@mkdir -p $(OBJDIR)
@@ -118,9 +116,9 @@ $(addprefix $(OBJDIR), %.o): $(addprefix $(SRCDIR), %.c)
 
 clean:
 	@rm -f $(OBJ)
-	rm -rf $(OBJDIR)
+	@rm -rf $(OBJDIR)
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all

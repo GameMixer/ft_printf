@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strndup.c                                       :+:      :+:    :+:   */
+/*   ft_lstpushback.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/07 15:51:33 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/08/08 19:57:50 by gderenzi         ###   ########.fr       */
+/*   Created: 2017/07/06 15:20:01 by gderenzi          #+#    #+#             */
+/*   Updated: 2017/07/06 15:23:49 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strndup(const char *src, size_t n)
+void	ft_lstpushback(t_list **lst, void const *content, size_t content_size)
 {
-	char	*dst;
-	char	*cdst;
+	t_list	*list;
 
-	if (!(dst = ft_strnew(n + 1)))
-		return (0);
-	cdst = dst;
-	n++;
-	while (--n > 0)
-		*dst++ = *src++;
-	*dst = '\0';
-	return (cdst);
+	list = *lst;
+	if (list)
+	{
+		while (list->next)
+			list = list->next;
+		list->next = ft_lstnew(content, content_size);
+	}
+	else
+		*lst = ft_lstnew(content, content_size);
 }

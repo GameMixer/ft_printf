@@ -6,7 +6,7 @@
 #    By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/02/28 19:09:15 by gderenzi          #+#    #+#              #
-#    Updated: 2017/05/30 12:40:30 by gderenzi         ###   ########.fr        #
+#    Updated: 2017/08/06 21:44:46 by gderenzi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,23 +14,18 @@ NAME		= libftprintf.a
 CC			= gcc
 CFLAGS		= -Wall -Werror -Wextra
 SRC			= ft_printf.c \
-			  init.c \
+			  spec_handle.c \
+			  prec_handle.c \
 			  check.c \
-			  buff.c \
-			  handle_format.c \
-			  display_num.c \
-			  display_char.c \
-			  wchar_to_char.c \
-			  c_flag.c \
-			  d_flag.c \
-			  p_flag_undefined.c \
-			  s_flag.c \
-			  u_o_flag.c \
-			  wu_wo_flag.c \
-			  x_flag.c \
-			  apply_flags.c \
-			  util.c \
-			  util2.c
+			  num_conv.c \
+			  float_conv.c \
+			  str_conv.c \
+			  wstr_conv.c \
+			  char_conv.c \
+			  xou_conv.c \
+			  bonus.c \
+			  vector.c \
+			  util.c
 
 OBJ			= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
@@ -65,5 +60,8 @@ clean:
 fclean: clean
 	$(MAKE) fclean -C $(LIBDIR)
 	rm -f $(NAME)
+
+comp:
+	$(CC) $(NAME) $(LIBINC) -I $(INCDIR) main.c
 
 re: fclean all

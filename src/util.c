@@ -6,81 +6,110 @@
 /*   By: gderenzi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/18 16:28:40 by gderenzi          #+#    #+#             */
-/*   Updated: 2017/05/25 17:46:42 by gderenzi         ###   ########.fr       */
+/*   Updated: 2017/08/07 20:57:07 by gderenzi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-uintmax_t	pf_sign(t_flag *f, intmax_t nbr)
+size_t	pf_findchar(const char *s, int c)
 {
-	f->sign = '+';
-	if (nbr < 0)
-	{
-		f->sign = '-';
-		nbr = -nbr;
-	}
-	return ((uintmax_t)nbr);
-}
+	int				i;
+	unsigned char	a;
 
-char		*pf_itoa_base(uintmax_t nbr, int base)
-{
-	intmax_t	i;
-	uintmax_t	n;
-	int			n_arr[64];
-	char		*result;
-
-	if (nbr == 0)
-		return ("0");
+	a = (unsigned char)c;
 	i = 0;
-	n = (intmax_t)nbr;
-	while (n > 0)
+	while (s[i] != '\0')
 	{
-		n_arr[i++] = n % base;
-		n /= base;
+		if (s[i] == a)
+			return (i);
+		i++;
 	}
-	result = (char *)malloc(sizeof(char) * --i);
-	result[i + 1] = '\0';
-	while (i >= 0)
-		result[n++] = HEXB_UP[n_arr[i--]];
-	return (result);
+	if (s[i] == a)
+		return (ft_strlen(s) + 1);
+	return (0);
 }
 
-size_t		pf_wstrlen(wchar_t *ws)
+void	*pf_realloc(void *ptr, size_t src_size, size_t new_size)
 {
-	size_t	len;
+	void	*new_ptr;
 
-	len = 0;
-	if (!ws)
-		return (0);
-	while (*(ws++))
-		len++;
-	return (len);
-}
-
-int			pf_wcharlen(wchar_t wchar)
-{
-	if (wchar <= 0x7F)
-		return (1);
-	else if (wchar <= 0x7FF)
-		return (2);
-	else if (wchar <= 0xFFFF)
-		return (3);
-	return (4);
-}
-
-size_t		pf_wbytelen(wchar_t *ws)
-{
-	size_t	len;
-	size_t	bytelen;
-
-	len = pf_wstrlen(ws);
-	bytelen = 0;
-	while (len > 0)
+	if (!new_size)
 	{
-		bytelen += pf_wcharlen(*ws);
-		ws++;
-		len--;
+		if (ptr)
+			free(ptr);
+		return (ptr);
 	}
-	return (bytelen);
+	if (!ptr)
+		return (ft_memalloc(new_size));
+	if (new_size <= src_size)
+		return (ptr);
+	new_ptr = ft_memalloc(new_size);
+	if (new_ptr)
+	{
+		ft_memcpy(new_ptr, ptr, src_size);
+		free(ptr);
+	}
+	return (new_ptr);
+}
+
+char	*pf_imaxtoa(intmax_t value)
+{
+	uintmax_t	i;
+	intmax_t	size;
+	char		*ret;
+
+	i = (value < 0) ? -value : value;
+	size = 1 + (value < 0);
+	while ((i /= 10))
+		size++;
+	ret = (char *)malloc(sizeof(char) * (size + 1));
+	ret[size] = '\0';
+	i = (value < 0) ? -value : value;
+	ret[--size] = "0123456789"[i % 10];
+	while ((i /= 10))
+		ret[--size] = "0123456789"[i % 10];
+	if (value < 0)
+		ret[--size] = '-';
+	return (ret);
+}
+
+char	*pf_uimaxtoa_base(uintmax_t value, int base, const char *str)
+{
+	uintmax_t	i;
+	size_t		size;
+	char		*ret;
+
+	i = value;
+	size = 1;
+	while ((i /= base))
+		size++;
+	ret = (char *)malloc(sizeof(char) * (size + 1));
+	ret[size] = '\0';
+	i = value;
+	ret[--size] = str[i % base];
+	while ((i /= base))
+		ret[--size] = str[i % base];
+	return (ret);
+}
+
+void	pf_insert_to_str(char **s1, char *s2)
+{
+	char	*str;
+	char	*strcpy;
+	char	*newstr;
+
+	if (s1 && s2)
+	{
+		newstr = ft_strnew(ft_strlen(*s1) + ft_strlen(s2) + 1);
+		str = newstr;
+		strcpy = *s1;
+		while (*s2)
+			*str++ = *s2++;
+		while (*strcpy)
+			*str++ = *strcpy++;
+		*str = '\0';
+		free(*s1);
+		*s1 = newstr;
+	}
 }
